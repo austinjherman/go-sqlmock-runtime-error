@@ -39,14 +39,8 @@ func newMockDatabase() (*gorm.DB, sqlmock.Sqlmock) {
 	dialector := mysql.New(mysql.Config{
 		Conn: sqlDB,
 		DriverName: "mysql",
+		SkipInitializeWithVersion: true,
 	})
-
-	// a SELECT VERSION() query will be run when gorm opens the database
-	// so we need to expect that here
-	columns := []string{"version"}
-	mock.ExpectQuery("SELECT VERSION()").WithArgs().WillReturnRows(
-		mock.NewRows(columns).FromCSVString("1"),
-	)
 
 	// open the database
 	db, err := gorm.Open(dialector, &gorm.Config{ PrepareStmt: true })
